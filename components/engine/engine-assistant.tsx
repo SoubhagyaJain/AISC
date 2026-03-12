@@ -1,4 +1,10 @@
+"use client";
+
+import { motion, useReducedMotion } from "framer-motion";
+import { staggerContainerFast, chipReveal, fadeUp, staggerItem } from "@/lib/motion";
+
 export function EngineAssistant() {
+  const shouldReduceMotion = useReducedMotion();
   const chips = [
     "What changed in revision 3?",
     "Show me the W-section count for grid B",
@@ -19,10 +25,10 @@ export function EngineAssistant() {
   ];
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+    <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8 overflow-hidden relative">
       <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
         {/* Copy */}
-        <div>
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={fadeUp}>
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-accent/90">
             Localized Project Assistant
           </p>
@@ -51,43 +57,80 @@ export function EngineAssistant() {
             <div className="h-2 w-2 rounded-full bg-accent" />
             Project-scoped · Secure · No cross-project access
           </div>
-        </div>
+        </motion.div>
 
         {/* Assistant mockup */}
         <div className="relative">
-          <div className="absolute -inset-3 rounded-3xl bg-accent/5 blur-2xl" />
-          <div className="relative rounded-3xl border border-white/15 bg-card/70 p-6 backdrop-blur">
+          <motion.div 
+            animate={shouldReduceMotion ? { opacity: 0.1, scale: 1 } : { opacity: [0.1, 0.4, 0.1], scale: [0.98, 1.02, 0.98] }}
+            transition={shouldReduceMotion ? undefined : { duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -inset-3 rounded-3xl bg-accent/5 blur-2xl pointer-events-none" 
+          />
+          <motion.div 
+             initial={{ opacity: 0, scale: 0.95 }}
+             whileInView={{ opacity: 1, scale: 1 }}
+             viewport={{ once: true, amount: 0.2 }}
+             transition={{ duration: 0.6 }}
+             className="relative rounded-3xl border border-white/15 bg-card/70 p-6 backdrop-blur z-10"
+          >
             {/* Query chips */}
             <p className="mb-3 text-xs text-muted">Common queries</p>
-            <div className="mb-5 flex flex-wrap gap-2">
+            <motion.div 
+              variants={staggerContainerFast}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="mb-5 flex flex-wrap gap-2"
+            >
               {chips.map((c) => (
-                <span
+                <motion.span
+                  variants={chipReveal}
+                  whileHover={{ scale: 1.04, borderColor: "rgba(163,255,31,0.3)" }}
                   key={c}
-                  className="cursor-default rounded-full border border-white/10 bg-background/60 px-3 py-1 text-xs text-muted transition hover:border-accent/30 hover:text-foreground"
+                  className="cursor-default rounded-full border border-white/10 bg-background/60 px-3 py-1 text-xs text-muted transition hover:text-foreground"
                 >
                   {c}
-                </span>
+                </motion.span>
               ))}
-            </div>
+            </motion.div>
 
             {/* Conversation cards */}
-            <div className="space-y-4">
-              {responses.map((r) => (
-                <div key={r.q} className="space-y-2">
+            <motion.div 
+              variants={staggerContainerFast}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.4 }}
+              className="space-y-4"
+            >
+              {responses.map((r, idx) => (
+                <div key={r.q} className="space-y-2 relative">
                   <div className="flex justify-end">
-                    <div className="max-w-xs rounded-2xl rounded-tr-sm border border-white/10 bg-card px-4 py-2.5 text-xs text-muted">
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, x: 10 }}
+                      whileInView={{ opacity: 1, y: 0, x: 0 }}
+                      transition={{ delay: idx * 0.4, duration: 0.4 }}
+                      viewport={{ once: true }}
+                      className="max-w-xs rounded-2xl rounded-tr-sm border border-white/10 bg-background px-4 py-2.5 text-xs text-muted"
+                    >
                       {r.q}
-                    </div>
+                    </motion.div>
                   </div>
                   <div className="flex justify-start">
-                    <div className="max-w-sm rounded-2xl rounded-tl-sm border border-accent/20 bg-accent/8 px-4 py-2.5 text-xs leading-relaxed text-foreground">
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, x: -10 }}
+                      whileInView={{ opacity: 1, y: 0, x: 0 }}
+                      transition={{ delay: idx * 0.4 + 0.2, duration: 0.4 }}
+                      viewport={{ once: true }}
+                      className="max-w-sm rounded-2xl rounded-tl-sm border border-accent/20 bg-accent/8 px-4 py-2.5 text-xs leading-relaxed text-foreground relative overflow-hidden"
+                    >
+                      <div className="absolute top-0 left-0 w-1 h-full bg-accent/30" />
                       {r.a}
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>

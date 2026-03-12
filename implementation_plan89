@@ -1,0 +1,64 @@
+# Advanced Motion Implementation Plan (Engine Page)
+
+This plan details the addition of high-end, intelligent motion design to the `SteelGenie Engine` page, utilizing `framer-motion` to create an elegant, system-aware feel.
+
+## Proposed Changes
+
+### 1. Engine Hero (`app/engine/engine-hero.tsx`)
+- **[MODIFY] EngineHero**
+  - Wrap the right-side visual in a `motion.div` system.
+  - Implement a staggered entrance for the Input (Document), Engine Nodes, and Output Deliverables.
+  - Add SVG line-tracing between the Input and the Engine, and Engine to Output, simulating data flow.
+  - Add subtle, continuous glowing pulses to the "SteelGenie Engine" structural nodes.
+
+### 2. Six-Stage Workflow (`app/engine/engine-workflow.tsx`)
+- **[MODIFY] EngineWorkflow**
+  - Implement a connected path drawing animation (using an absolute SVG line that connects the cards in the grid) triggered by scroll (`whileInView`).
+  - Stagger the reveal of the 6 step-cards.
+  - On hover: node icon scale/glow micro-interaction, conveying that the nodes are "active".
+
+### 3. Smart Guardrails (`app/engine/engine-guardrails.tsx`)
+- **[MODIFY] EngineGuardrails**
+  - Add simulation-style micro-animations: 
+    - The `dot` indicator will pulse like a system status light (`repeat: Infinity, duration: 2`).
+    - Staggered entry for each guardrail card.
+    - Hover effect: illuminate border and elevate slightly with premium shadow.
+
+### 4. Deliverables (`app/engine/engine-deliverables.tsx`)
+- **[MODIFY] EngineDeliverables**
+  - Animate the transformation of outputs. Cards enter with a soft parallax scaling effect on scroll.
+  - Hover: Add a sweeping gleam across the top border to symbolize a polished artifact.
+
+### 5. Localized Assistant (`app/engine/engine-assistant.tsx`)
+- **[MODIFY] EngineAssistant**
+  - Conversational cascade: Query chips gently float in.
+  - The Q&A bubbles build progressively (Questions slide from right, Answers build from left with a slight delay) to simulate an intelligent response generation.
+  - Add a soft network pulse behind the assistant mockup.
+
+### 6. Final CTA (`app/engine/engine-cta.tsx`)
+- **[MODIFY] EngineCta**
+  - Add a subtle ambient lattice/grid movement in the background of the form card.
+  - Input field focus states will transition smoothly with a glowing border effect.
+  - Staggered reveal of the form fields when in view.
+
+### 7. Global Motion & Proof Strip (`app/engine/engine-proof-strip.tsx`)
+- **[MODIFY] EngineProofStrip**
+  - Sequential highlight motion for the proof chips.
+
+## Performance & Accessibility Strategy
+- Use `useReducedMotion` hook from Framer Motion to disable continuous or heavy translations for users who prefer reduced motion.
+- Keep looping animations (like status dots) extremely lightweight (opacity/scale only).
+- Animate `transform` and `opacity` properties to avoid paint/layout reflow costs.
+- Ensure all animations run at 60fps on mobile by stripping out complex SVG lines on smaller screens if they cause lag.
+
+## Verification Plan
+
+### Automated/Dev Tests
+- Run `npm run dev` and navigate to `http://localhost:3000/engine`.
+- Check browser console for hydration errors or Framer Motion warnings.
+
+### Manual Verification
+- Open the page and verify the Hero visual clearly shows the transformation timeline.
+- Scroll down the page and verify that `whileInView` animations trigger reliably.
+- Hover over interactive elements (cards, icons, inputs) to ensure premium elasticity without cartoonish bounciness.
+- Test in mobile window size to confirm motion is simplified to key transitions.

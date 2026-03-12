@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { fadeUp, staggerContainer, staggerItem } from "@/lib/motion";
 
 const fields = [
   { label: "Name", name: "name", type: "text", required: true },
@@ -11,6 +13,7 @@ const fields = [
 ];
 
 export function EngineCta() {
+  const shouldReduceMotion = useReducedMotion();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -40,8 +43,22 @@ export function EngineCta() {
 
   return (
     <section id="demo" className="mx-auto max-w-5xl px-6 py-20 lg:px-8">
-      <div className="rounded-3xl border border-accent/20 bg-gradient-to-br from-card/80 via-card/60 to-background p-8 shadow-glow backdrop-blur md:p-12">
-        <div className="mx-auto max-w-xl text-center">
+      <motion.div 
+        initial="hidden" 
+        whileInView="visible" 
+        viewport={{ once: true, amount: 0.2 }} 
+        variants={fadeUp}
+        className="relative overflow-hidden rounded-3xl border border-accent/20 bg-gradient-to-br from-card/80 via-card/60 to-background p-8 shadow-[0_0_40px_-10px_rgba(163,255,31,0.1)] backdrop-blur md:p-12 z-10"
+      >
+        {/* Subtle ambient grid movement */}
+        <motion.div 
+          animate={shouldReduceMotion ? { backgroundPosition: "0% 0%" } : { backgroundPosition: ["0% 0%", "100% 100%"] }}
+          transition={shouldReduceMotion ? undefined : { duration: 40, repeat: Infinity, ease: "linear" }}
+          className="pointer-events-none absolute inset-0 opacity-[0.03] z-0"
+          style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }}
+        />
+
+        <div className="mx-auto max-w-xl text-center relative z-10">
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-accent">
             Book a Demo
           </p>
@@ -54,17 +71,24 @@ export function EngineCta() {
         </div>
 
         {status === "success" ? (
-          <div className="mx-auto mt-10 max-w-sm rounded-2xl border border-accent/30 bg-accent/10 p-6 text-center">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mx-auto mt-10 max-w-sm rounded-2xl border border-accent/30 bg-accent/10 p-6 text-center relative z-10">
             <p className="text-lg font-semibold text-accent">Request received.</p>
             <p className="mt-2 text-sm text-muted">We&#39;ll reach out within one business day to schedule your session.</p>
             <Button variant="secondary" className="mt-6" onClick={() => setStatus("idle")}>
               Submit another
             </Button>
-          </div>
+          </motion.div>
         ) : (
-          <form className="mx-auto mt-10 grid max-w-2xl gap-4 md:grid-cols-2" onSubmit={onSubmit}>
+          <motion.form 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="mx-auto mt-10 grid max-w-2xl gap-4 md:grid-cols-2 relative z-10" 
+            onSubmit={onSubmit}
+          >
             {fields.map((f) => (
-              <label key={f.name} className="text-sm text-muted">
+              <motion.label variants={staggerItem} key={f.name} className="text-sm text-muted">
                 {f.label} {f.required && <span className="text-accent">*</span>}
                 <input
                   name={f.name}
@@ -72,34 +96,34 @@ export function EngineCta() {
                   required={f.required}
                   disabled={status === "loading"}
                   placeholder={f.label}
-                  className="mt-2 w-full rounded-xl border border-white/15 bg-background/70 px-4 py-3 text-foreground outline-none ring-accent/50 transition focus:ring-2 disabled:opacity-50"
+                  className="mt-2 w-full rounded-xl border border-white/15 bg-background/70 px-4 py-3 text-foreground outline-none ring-accent/50 transition-all duration-300 focus:ring-2 focus:border-accent/40 focus:bg-background disabled:opacity-50"
                 />
-              </label>
+              </motion.label>
             ))}
-            <label className="text-sm text-muted md:col-span-2">
+            <motion.label variants={staggerItem} className="text-sm text-muted md:col-span-2">
               Tell us about your workflow
               <textarea
                 name="message"
                 rows={4}
                 disabled={status === "loading"}
                 placeholder="What types of drawings do you work with? What's the biggest bottleneck today?"
-                className="mt-2 w-full rounded-xl border border-white/15 bg-background/70 px-4 py-3 text-foreground outline-none ring-accent/50 transition focus:ring-2 disabled:opacity-50"
+                className="mt-2 w-full rounded-xl border border-white/15 bg-background/70 px-4 py-3 text-foreground outline-none ring-accent/50 transition-all duration-300 focus:ring-2 focus:border-accent/40 focus:bg-background disabled:opacity-50"
               />
-            </label>
+            </motion.label>
             {status === "error" && (
-              <p className="text-sm text-red-400 md:col-span-2">{errorMessage}</p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-red-400 md:col-span-2">{errorMessage}</motion.p>
             )}
-            <div className="flex flex-col gap-3 sm:flex-row md:col-span-2">
-              <Button size="lg" className="flex-1" disabled={status === "loading"}>
+            <motion.div variants={staggerItem} className="flex flex-col gap-3 sm:flex-row md:col-span-2 mt-4">
+              <Button size="lg" className="flex-1 transition-transform active:scale-95" disabled={status === "loading"}>
                 {status === "loading" ? "Submitting..." : "Book Demo"}
               </Button>
-              <Button size="lg" variant="secondary" className="flex-1" type="button">
+              <Button size="lg" variant="secondary" className="flex-1 transition-transform active:scale-95 hover:bg-white/10" type="button">
                 Request Workflow Review
               </Button>
-            </div>
-          </form>
+            </motion.div>
+          </motion.form>
         )}
-      </div>
+      </motion.div>
     </section>
   );
 }
