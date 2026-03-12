@@ -8,6 +8,7 @@ import { Navbar } from "@/components/sections/navbar";
 import { Pricing } from "@/components/sections/pricing";
 import { SmarterSection } from "@/components/sections/smarter-section";
 import { StatsBar } from "@/components/sections/stats-bar";
+import { EngineSpotlight } from "@/components/sections/engine-spotlight";
 
 export default function HomePage() {
   return (
@@ -21,6 +22,7 @@ export default function HomePage() {
         <Features />
         <HowItWorks />
         <SmarterSection />
+        <EngineSpotlight />
         <LiveDashboard />
         <Pricing />
         <LeadForm />
@@ -29,3 +31,4 @@ export default function HomePage() {
     </div>
   );
 }
+
